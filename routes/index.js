@@ -16,16 +16,19 @@ router.get('/', async function (req, res) {
         const splittedFilename = filename.split('.');
         const filenameWithoutExtension = splittedFilename[0];
         const fileExtension = splittedFilename[1];
+        const convertedFilename = `${filenameWithoutExtension}-converted.${fileExtension}`;
         const convertedFilepath = path.resolve(
           './',
           'public',
           'images',
-          `${filenameWithoutExtension}.${fileExtension}`
+          `${convertedFilename}`
         );
-        const convertedFilepath = file + '-converted';
         // create cartoonized version of the image added in the query param
-        await execShellCommand(
-          `convert ${filepath} -kuwahara RadiusxSigma resultimage`
+        const convertedFile = await execShellCommand(
+          `convert ${filepath} -kuwahara 3 -unsharp 0x2+4+0 ${convertedFilepath}`
+        );
+        res.send(
+          `File has been converted - access it using https://localhost:3000/images/${convertedFilename}`
         );
       }
     } catch (error) {
@@ -36,7 +39,7 @@ router.get('/', async function (req, res) {
   res.send(
     filename
       ? filename
-      : 'Please add the filename in the query param to continue'
+      : 'Please add the filename in the query param filename=someFileName.extension to continue'
   );
 });
 
