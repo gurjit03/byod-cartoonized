@@ -2,9 +2,14 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const fs = require('fs').promises;
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 const execShellCommand = require('../utils/exec-shell-command');
 
-// HOME PAGE
+router.post('/upload', async function (req, res) {
+  cons;
+});
+
 router.get('/', async function (req, res) {
   const filename = req.query.filename;
   res.setHeader('Content-Type', 'text/plain');
