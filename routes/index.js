@@ -2,11 +2,10 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const fs = require('fs').promises;
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const upload = require('../lib/multer');
 const execShellCommand = require('../utils/exec-shell-command');
 
-router.post('/upload', async function (req, res) {
+router.post('/upload', upload.single(), async function (req, res) {
   cons;
 });
 
