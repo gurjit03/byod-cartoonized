@@ -5,9 +5,63 @@ const fs = require('fs').promises;
 const upload = require('../lib/multer');
 const execShellCommand = require('../utils/exec-shell-command');
 
-router.post('/upload', upload.single(), async function (req, res) {
-  cons;
-});
+router.post(
+  '/upload',
+  upload.single('uploadedFile'),
+  async function (req, res) {
+    try {
+      const uploadedFile = req.file;
+
+      // make sure file is available
+      if (!uploadedFile) {
+        res.status(400).send({
+          status: false,
+          data: 'No file is selected.',
+        });
+      } else {
+        const filepath = path.resolve('./', 'public', 'images', filename);
+        try {
+          const filestats = await fs.stat(filepath);
+          if (filestats) {
+            const splittedFilename = filename.split('.');
+            const filenameWithoutExtension = splittedFilename[0];
+            const fileExtension = splittedFilename[1];
+            const convertedFilename = `${filenameWithoutExtension}-converted.${fileExtension}`;
+            const convertedFilepath = path.resolve(
+              './',
+              'public',
+              'images',
+              `${convertedFilename}`
+            );
+            // create cartoonized version of the image added in the query param
+            const convertedFile = await execShellCommand(
+              `convert ${filepath} -kuwahara 3 -unsharp 0x2+4+0 ${convertedFilepath}`
+            );
+            res.send(
+              `File has been converted - access it using https://localhost:3000/images/${convertedFilename}`
+            );
+          }
+        } catch (error) {
+          console.log(error.message);
+          res.send('file is not available on the server');
+        }
+
+        // send response
+        res.send({
+          status: true,
+          message: 'File is uploaded.',
+          data: {
+            name: uploadedFile.originalname,
+            mimetype: uploadedFile.mimetype,
+            size: uploadedFile.size,
+          },
+        });
+      }
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  }
+);
 
 router.get('/', async function (req, res) {
   const filename = req.query.filename;
