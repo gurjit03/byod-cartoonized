@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
+const execShellCommand = require('./exec-shell-command');
 
-function cartoonizeFile(filename) {
+async function applyFilters(filename, filterName = 'cartoonize') {
   const filepath = path.resolve('./', 'public', 'uploads', filename);
   try {
     const filestats = await fs.stat(filepath);
@@ -27,4 +28,4 @@ function cartoonizeFile(filename) {
   }
 }
 
-module.exports = cartoonizeFile;
+module.exports = applyFilters;

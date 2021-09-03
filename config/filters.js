@@ -1,0 +1,5 @@
+const filters = {
+  cartoonize: {
+    commmand,
+  },
+};

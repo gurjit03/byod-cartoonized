@@ -3,7 +3,7 @@ const path = require('path');
 const router = express.Router();
 const fs = require('fs').promises;
 const upload = require('../lib/multer');
-const execShellCommand = require('../utils/exec-shell-command');
+const applyFilters = require('../utils/apply-filter');
 
 router.post(
   '/upload',
