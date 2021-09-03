@@ -1,7 +1,8 @@
 const fs = require('fs').promises;
+const filters = require('../config/filters');
 const execShellCommand = require('./exec-shell-command');
 
-async function applyFilters(filename, filterName = 'cartoonize') {
+async function applyFilters(filename, filterName = 'cartoon') {
   const filepath = path.resolve('./', 'public', 'uploads', filename);
   try {
     const filestats = await fs.stat(filepath);
@@ -16,15 +17,17 @@ async function applyFilters(filename, filterName = 'cartoonize') {
         'images',
         `${convertedFilename}`
       );
-      // create cartoonized version of the image
-      await execShellCommand(
-        `convert ${filepath} -kuwahara 3 -unsharp 0x2+4+0 ${convertedFilepath}`
-      );
+      const filterCommand = filters[filterName].command({
+        filepath,
+        convertedFilepath,
+      });
+      // create filterized version of the image
+      await execShellCommand(filterCommand);
       return true;
     }
   } catch (error) {
     console.log(error.message);
-    return false;
+    throw new error(error.message);
   }
 }
 

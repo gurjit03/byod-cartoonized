@@ -19,36 +19,14 @@ router.post(
           data: 'No file is selected.',
         });
       } else {
-        const filepath = path.resolve('./', 'public', 'images', filename);
         try {
-          const filestats = await fs.stat(filepath);
-          if (filestats) {
-            const splittedFilename = filename.split('.');
-            const filenameWithoutExtension = splittedFilename[0];
-            const fileExtension = splittedFilename[1];
-            const convertedFilename = `${filenameWithoutExtension}-converted.${fileExtension}`;
-            const convertedFilepath = path.resolve(
-              './',
-              'public',
-              'images',
-              `${convertedFilename}`
-            );
-            // create cartoonized version of the image added in the query param
-            const convertedFile = await execShellCommand(
-              `convert ${filepath} -kuwahara 3 -unsharp 0x2+4+0 ${convertedFilepath}`
-            );
-            res.send(
-              `File has been converted - access it using https://localhost:3000/images/${convertedFilename}`
-            );
-          }
+          await applyFilters(uploadedFile.originalname);
         } catch (error) {
-          console.log(error.message);
-          res.send('file is not available on the server');
+          res.status(500).send('File not available on the server');
         }
 
         // send response
-        res.send({
-          status: true,
+        res.status(200).send({
           message: 'File is uploaded.',
           data: {
             name: uploadedFile.originalname,
@@ -57,8 +35,8 @@ router.post(
           },
         });
       }
-    } catch (err) {
-      res.status(500).send(err);
+    } catch (error) {
+      res.status(500).send(error.message);
     }
   }
 );
