@@ -3,6 +3,7 @@ const path = require('path');
 const filters = require('../config/filters');
 const execShellCommand = require('./exec-shell-command');
 
+// eslint-disable-next-line consistent-return
 async function applyFilters(filename, filterName = 'cartoon') {
   const filepath = path.resolve('./', 'public', 'uploads', filename);
   try {
@@ -28,8 +29,7 @@ async function applyFilters(filename, filterName = 'cartoon') {
       return true;
     }
   } catch (error) {
-    console.log(error.message);
-    throw new error(error.message);
+    throw new Error(error.message);
   }
 }
 
