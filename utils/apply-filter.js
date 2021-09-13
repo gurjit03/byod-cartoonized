@@ -1,10 +1,10 @@
 const fs = require('fs').promises;
+const path = require('path');
 const filters = require('../config/filters');
 const execShellCommand = require('./exec-shell-command');
 
 async function applyFilters(filename, filterName = 'cartoon') {
   const filepath = path.resolve('./', 'public', 'uploads', filename);
-  console.log(filepath, 'FILE PTH...');
   try {
     const filestats = await fs.stat(filepath);
     if (filestats) {
@@ -18,7 +18,8 @@ async function applyFilters(filename, filterName = 'cartoon') {
         'images',
         `${convertedFilename}`
       );
-      const filterCommand = filters[filterName].command({
+      const filter = filters[filterName];
+      const filterCommand = filter.command({
         filepath,
         convertedFilepath,
       });
