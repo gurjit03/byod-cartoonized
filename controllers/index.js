@@ -3,7 +3,6 @@ const applyFilters = require('../utils/apply-filter');
 async function uploadFileController(req, res) {
   try {
     const uploadedFile = req.file;
-    console.log(uploadedFile, 'UPLOADED FILE...');
 
     // make sure file is available
     if (!uploadedFile) {
